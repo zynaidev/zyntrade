@@ -1,8 +1,7 @@
 'use client'
 import { useSession } from '@/lib/auth-client'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Sidebar from '@/components/Sidebar'
 import Dashboard from '@/components/Dashboard'
 import StrategyChecklist from '@/components/StrategyChecklist'
@@ -14,18 +13,20 @@ export default function Home() {
   const [activePage, setActivePage] = useState('dashboard')
 
   useEffect(() => {
-    if (!isPending && !session) {
-      router.push('/login')
+    if (!isPending && !session?.user) {
+      router.replace('/login')
     }
   }, [session, isPending, router])
 
-  if (isPending || !session) {
+  if (isPending) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: '#080810' }}>
         <div className="w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
+
+  if (!session?.user) return null
 
   const renderPage = () => {
     switch (activePage) {

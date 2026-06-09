@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { TrendingUp, TrendingDown, DollarSign, BarChart2, X, ChevronDown, ImageIcon, Edit3, Trash2, ChevronLeft, ChevronRight, Clock } from 'lucide-react'
 import { deleteTrade } from '@/lib/api'
-import useTradeStore from '../store/useTrades'
+import useTradeStore from '@/store/useTrades'
 
 function calcPnL(trade) {
   const diff = trade.closePrice - trade.entryPrice

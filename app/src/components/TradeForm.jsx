@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useId } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { uploadImages, createTrade, updateTrade } from '@/lib/api'
-import useTradeStore from '../store/useTrades'
+import useTradeStore from '@/store/useTrades'
 import { Check, TrendingUp, TrendingDown, ImagePlus, X, CalendarDays, Clock, Save, PlusCircle, Search, DollarSign, PenTool, LayoutTemplate, Tag } from 'lucide-react'
 
 const FAVORITES = ['EUR/USD', 'GBP/USD', 'DAX', 'XAU/USD', 'NAS100']

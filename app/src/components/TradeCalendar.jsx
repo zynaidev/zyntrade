@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import useTradeStore from '../store/useTrades'
+import useTradeStore from '@/store/useTrades'
 import { ChevronLeft, ChevronRight, TrendingUp, TrendingDown } from 'lucide-react'
 
 const DAYS = ['Hét', 'Ked', 'Sze', 'Csü', 'Pén', 'Szo', 'Vas']

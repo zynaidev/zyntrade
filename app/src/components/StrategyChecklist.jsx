@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDown, CheckCircle2, Circle, Quote, ShieldAlert, ShieldCheck } from 'lucide-react'
-import ProgressRing from '../components/ProgressRing'
+import ProgressRing from '@/components/ProgressRing'
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 

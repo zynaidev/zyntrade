@@ -1,4 +1,3 @@
-import { NavLink } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { LayoutDashboard, CheckSquare, Globe, Flame, ZapOff, Coffee, ArrowRight, User } from 'lucide-react'
 import { useState, useEffect } from 'react'
@@ -140,11 +139,11 @@ function TradingSessionTracker() {
 
 // ─── Main Sidebar Component ───────────────────────────────────────────────────
 
-export default function Sidebar() {
+export default function Sidebar({ activePage, onPageChange }) {
   const NAV_LINKS = [
-    { to: '/', icon: LayoutDashboard, label: 'Vezérlőpult' },
-    { to: '/checklist', icon: CheckSquare, label: 'Stratégia' },
-    { to: '/clocks', icon: Globe, label: 'Órák' },
+    { id: 'dashboard', icon: LayoutDashboard, label: 'Vezérlőpult' },
+    { id: 'checklist', icon: CheckSquare, label: 'Stratégia' },
+    { id: 'clocks', icon: Globe, label: 'Órák' },
   ]
 
   return (
@@ -168,34 +167,32 @@ export default function Sidebar() {
 
       {/* Navigation Links */}
       <nav className="flex-1 px-4 space-y-2">
-        {NAV_LINKS.map((link) => (
-          <NavLink
-            key={link.to}
-            to={link.to}
-            className={({ isActive }) =>
-              `flex items-center gap-4 px-6 py-4 rounded-2xl text-sm font-bold transition-all duration-300 group ${
-                isActive 
-                  ? 'text-white bg-gradient-to-r from-[#a855f7]/20 to-[#3b82f6]/20 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)]' 
+        {NAV_LINKS.map((link) => {
+          const isActive = activePage === link.id
+          return (
+            <button
+              key={link.id}
+              type="button"
+              onClick={() => onPageChange(link.id)}
+              className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-sm font-bold transition-all duration-300 group ${
+                isActive
+                  ? 'text-white bg-gradient-to-r from-[#a855f7]/20 to-[#3b82f6]/20 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)]'
                   : 'text-white/40 hover:text-white hover:bg-white/[0.02]'
-              }`
-            }
-            style={({ isActive }) =>
-              isActive
-                ? { border: '1px solid rgba(168,85,247,0.3)' }
-                : { border: '1px solid transparent' }
-            }
-          >
-            {({ isActive }) => (
-              <>
-                <link.icon 
-                  size={20} 
-                  className={`transition-colors duration-300 ${isActive ? 'text-[#a855f7]' : 'text-white/30 group-hover:text-white/70'}`} 
-                />
-                <span className="tracking-wide">{link.label}</span>
-              </>
-            )}
-          </NavLink>
-        ))}
+              }`}
+              style={
+                isActive
+                  ? { border: '1px solid rgba(168,85,247,0.3)' }
+                  : { border: '1px solid transparent' }
+              }
+            >
+              <link.icon
+                size={20}
+                className={`transition-colors duration-300 ${isActive ? 'text-[#a855f7]' : 'text-white/30 group-hover:text-white/70'}`}
+              />
+              <span className="tracking-wide">{link.label}</span>
+            </button>
+          )
+        })}
       </nav>
     </aside>
   )

@@ -1,8 +1,8 @@
 import { useState, useCallback, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { TrendingUp, TrendingDown, DollarSign, BarChart2, X, ChevronDown, ImageIcon, Edit3, Trash2, ChevronLeft, ChevronRight, Clock } from 'lucide-react'
-import { deleteTrade as supabaseDelete } from '../lib/supabaseClient'
-import useTradeStore from '../store/useTrades'
+import { deleteTrade } from '@/lib/api'
+import useTradeStore from '@/store/useTrades'
 
 function calcPnL(trade) {
   const diff = trade.closePrice - trade.entryPrice
@@ -118,7 +118,7 @@ export default function DayTradeCard({ date, trades, onClose, onEdit }) {
     e.stopPropagation()
     if (window.confirm('Biztosan törölni szeretnéd ezt a kötést?')) {
       try {
-        await supabaseDelete(tradeId)
+        await deleteTrade(tradeId)
         removeTradeLocal(tradeId)
       } catch (err) {
         console.error(err)

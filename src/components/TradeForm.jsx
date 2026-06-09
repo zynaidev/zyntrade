@@ -1,8 +1,7 @@
 import { useState, useRef, useEffect, useId } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { sendTradeToWebhook } from '../services/n8nWebhook'
-import { uploadScreenshots, insertTrade, updateTrade } from '../lib/supabaseClient'
-import useTradeStore from '../store/useTrades'
+import { uploadImages, createTrade, updateTrade } from '@/lib/api'
+import useTradeStore from '@/store/useTrades'
 import { Check, TrendingUp, TrendingDown, ImagePlus, X, CalendarDays, Clock, Save, PlusCircle, Search, DollarSign, PenTool, LayoutTemplate, Tag } from 'lucide-react'
 
 const FAVORITES = ['EUR/USD', 'GBP/USD', 'DAX', 'XAU/USD', 'NAS100']
@@ -115,15 +114,13 @@ export default function TradeForm({ activeDate, editingTrade, onCancelEdit }) {
       let finalImageUrls = editingTrade ? (editingTrade.image_urls || []) : []
       if (imageFiles && imageFiles.length > 0) {
         try {
-          const uploadedUrls = await uploadScreenshots(imageFiles)
+          const uploadedUrls = await uploadImages(imageFiles)
           finalImageUrls = [...finalImageUrls, ...uploadedUrls]
         } catch (err) {
           console.error('Képfeltöltés sikertelen.', err)
           throw new Error('Képfeltöltés sikertelen: ' + err.message)
         }
       }
-
-      const tradeDate = form.date || new Date().toISOString().split('T')[0]
 
       // R-Multiple Calculation
       const ep = parseFloat(form.entryPrice)
@@ -143,30 +140,28 @@ export default function TradeForm({ activeDate, editingTrade, onCancelEdit }) {
       const mistakeTags = selectedTags.filter(t => BEHAVIORAL_TAGS.find(b => b.label === t)?.isMistake)
 
       const tradeData = {
-        ...form,
-        entryPrice: isNaN(ep) ? 0 : ep,
-        stopLoss: isNaN(sl) ? 0 : sl,
-        closePrice: isNaN(cp) ? 0 : cp,
-        date: tradeDate,
+        instrument: form.instrument,
+        direction: form.direction,
+        entry_price: parseFloat(form.entryPrice) || 0,
+        stop_loss: parseFloat(form.stopLoss) || 0,
+        close_price: parseFloat(form.closePrice) || 0,
+        entry_time: form.entryTime || null,
+        exit_time: form.exitTime || null,
+        date: form.date,
+        notes: form.notes || '',
         image_urls: finalImageUrls || [],
         r_multiple,
         tags: normalTags,
-        mistake_tags: mistakeTags
+        mistake_tags: mistakeTags,
       }
 
       let resultTrade
       if (editingTrade) {
         resultTrade = await updateTrade(editingTrade.id, tradeData)
-        updateTradeStore(resultTrade || tradeData) // Ensure immediate local update
+        updateTradeStore(resultTrade)
       } else {
-        resultTrade = await insertTrade(tradeData)
-        addTrade(resultTrade || tradeData) // Ensure immediate local update
-      }
-
-      try {
-        await sendTradeToWebhook(resultTrade || tradeData)
-      } catch (err) {
-        console.warn('n8n webhook sikertelen.', err)
+        resultTrade = await createTrade(tradeData)
+        addTrade(resultTrade)
       }
 
       setSubmitted(true)

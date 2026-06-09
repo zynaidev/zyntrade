@@ -15,9 +15,13 @@ export default function LoginPage() {
     setLoading(true)
     setError('')
     try {
-      await signIn.email({ email, password })
+      const { error: signInError } = await signIn.email({ email, password })
+      if (signInError) {
+        setError('Hibás email vagy jelszó.')
+        return
+      }
       router.push('/')
-    } catch (err) {
+    } catch {
       setError('Hibás email vagy jelszó.')
     } finally {
       setLoading(false)

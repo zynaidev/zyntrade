@@ -1,5 +1,4 @@
-import { motion } from 'framer-motion'
-import { LayoutDashboard, CheckSquare, Globe, Flame, ZapOff, Coffee, ArrowRight, User } from 'lucide-react'
+import { LayoutDashboard, CheckSquare, Globe, Flame, ZapOff, Coffee } from 'lucide-react'
 import { useState, useEffect } from 'react'
 
 // ─── Constants Interface ─────────────────────────────────────────────────────

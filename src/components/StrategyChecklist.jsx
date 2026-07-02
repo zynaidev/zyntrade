@@ -109,7 +109,9 @@ export default function StrategyChecklist() {
   useEffect(() => {
     async function loadHistory() {
       try {
-        const res = await fetch('/api/checklist')
+        const res = await fetch('/api/checklist', {
+          credentials: 'include',
+        })
         if (!res.ok) throw new Error('Failed to load history')
         const data = await res.json()
         setHistory(data.slice(0, 10))
@@ -153,6 +155,7 @@ export default function StrategyChecklist() {
       const res = await fetch('/api/checklist', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           date,
           instrument,

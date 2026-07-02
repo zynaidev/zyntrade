@@ -3,10 +3,11 @@ import { auth } from '@/lib/auth'
 import { pool } from '@/lib/db'
 import { headers } from 'next/headers'
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth.api.getSession({ headers: await headers() })
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
+  const { id } = await params
   const body = await req.json()
   const result = await pool.query(
     `UPDATE trades SET
@@ -29,7 +30,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       body.tags || [],
       body.mistake_tags || [],
       body.r_multiple || 0,
-      params.id,
+      id,
       session.user.id,
     ]
   )
@@ -38,13 +39,14 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   return NextResponse.json(result.rows[0])
 }
 
-export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth.api.getSession({ headers: await headers() })
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
+  const { id } = await params
   await pool.query(
     'DELETE FROM trades WHERE id=$1 AND user_id=$2',
-    [params.id, session.user.id]
+    [id, session.user.id]
   )
   return NextResponse.json({ success: true })
 }

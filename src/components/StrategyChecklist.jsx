@@ -133,12 +133,28 @@ const STRATEGIES = {
           {
             id: 'a6',
             label: 'Plan A — Manipulációs Fordulat',
-            description: 'Ár átmegy a szinten (fake breakout / stop hunt) → fordulós alakzat kialakul → ár visszatér a szint másik oldalára → ellentétes irányba indul → belépés az alakzat visszatesztjén. Ha bármelyik lépés hiányzik vagy nem tiszta, nem lépsz be ezen a setupon.'
+            tag: 'Preferált, erősebb setup',
+            steps: [
+              'Ár átmegy a szinten — fake breakout, stop hunt',
+              'A szinten túl fordulós alakzat alakul ki (pl. inverz fej-váll, double top/bottom, engulfing, pin bar)',
+              'Ár visszatér a szint másik oldalára és ott marad — ez a kulcs megerősítés',
+              'Ha a szint alatt/felett marad és nem kapaszkodik vissza → belépés visszatesztkor vagy az alakzat neckline törésénél',
+            ],
+            sl: 'A manipulációs spike legszélső pontja mögé — nem a szint mögé, hanem a fake breakout csúcsa/mélypontja mögé.',
+            invalidation: 'Az ár visszakapaszkodik a szint másik oldalára → nem A setup volt, kihagyod.',
           },
           {
             id: 'a7',
             label: 'Plan B — Kitörés & Visszateszt',
-            description: 'Heves, egyértelmű kitörés a szintből (nem lassú, nem habozó) → visszatesztelés kintről → trendirányban folytatódás → belépés a visszateszt megerősítésekor. Ha bármelyik lépés hiányzik, nem lépsz be.'
+            tag: 'Csak egyértelmű H1 trendben érvényes',
+            steps: [
+              'Heves, nagy testű gyertya töri a szintet — EMA-tól eltávolodik, nincs habozás',
+              'Visszajön a szint közelébe kintről — nem töri vissza',
+              'A szint elutasítja (rejection candle, pin bar, kis testű visszapattanó gyertya)',
+              'Belépés az elutasítás megerősítésekor',
+            ],
+            sl: 'A visszateszt mélypontja/csúcsa mögé.',
+            invalidation: 'A visszateszt visszatör a szinten belülre → nem B setup, kihagyod.',
           },
         ],
       },
@@ -253,19 +269,68 @@ function RuleRow({ rule, isChecked, onToggle, emphasized }) {
         {isChecked && <Check size={emphasized ? 15 : 13} color="white" strokeWidth={3} />}
       </div>
       <div style={{ flex: 1, minWidth: 0 }}>
-        <span
-          style={{
-            color: isChecked ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.5)',
-            fontSize: emphasized ? 17 : 14,
-            fontWeight: 700,
-            lineHeight: 1.5,
-          }}
-        >
-          {rule.label}
-        </span>
-        <p style={{ color: 'rgba(255,255,255,0.32)', fontSize: emphasized ? 13 : 12, lineHeight: 1.55, marginTop: 4 }}>
-          {rule.description}
-        </p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+          <span
+            style={{
+              color: isChecked ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.5)',
+              fontSize: emphasized ? 17 : 14,
+              fontWeight: 700,
+              lineHeight: 1.5,
+            }}
+          >
+            {rule.label}
+          </span>
+          {rule.tag && (
+            <span
+              style={{
+                fontSize: 10.5,
+                fontWeight: 700,
+                color: GOLD,
+                textTransform: 'uppercase',
+                letterSpacing: 0.5,
+                border: '1px solid rgba(201,169,97,0.35)',
+                borderRadius: 999,
+                padding: '2px 9px',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {rule.tag}
+            </span>
+          )}
+        </div>
+
+        {rule.steps ? (
+          <ul style={{ margin: '8px 0 0', padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 6 }}>
+            {rule.steps.map((step, i) => (
+              <li key={i} style={{ display: 'flex', gap: 8, color: 'rgba(255,255,255,0.55)', fontSize: emphasized ? 13 : 12, lineHeight: 1.5 }}>
+                <span style={{ color: GOLD, flexShrink: 0 }}>•</span>
+                <span>{step}</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p style={{ color: 'rgba(255,255,255,0.32)', fontSize: emphasized ? 13 : 12, lineHeight: 1.55, marginTop: 4 }}>
+            {rule.description}
+          </p>
+        )}
+
+        {rule.sl && (
+          <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: emphasized ? 13 : 12, lineHeight: 1.5, marginTop: 8 }}>
+            <span style={{ color: GOLD, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 0.5, fontSize: 10.5, marginRight: 6 }}>
+              SL
+            </span>
+            {rule.sl}
+          </p>
+        )}
+
+        {rule.invalidation && (
+          <p style={{ color: CRIMSON, fontSize: emphasized ? 13 : 12, lineHeight: 1.5, marginTop: 8 }}>
+            <span style={{ fontWeight: 800, textTransform: 'uppercase', letterSpacing: 0.5, fontSize: 10.5, marginRight: 6 }}>
+              Érvénytelen, ha
+            </span>
+            {rule.invalidation}
+          </p>
+        )}
       </div>
     </div>
   )
